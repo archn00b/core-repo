@@ -1,6 +1,9 @@
 # archn00b REPOSITORY
 
-[archnoob-core-repo]
+
+
+# PLACE IN ETC/PACMAN.CONF
+[core-repo]
 SigLevel = PackageRequired DatabaseNever
 Server = https://archn00b.github.io/$repo/$arch
 
