@@ -2,7 +2,7 @@
 #
 # Script name: build-db.sh
 # Description: Script for rebuilding the database for ArchN00B-core-repo.
-# GitLab: https://www.github.com/archn00b
+# Github: https://www.github.com/archn00b
 # Contributors: ArchN00B
 
 # Set with the flags "-e", "-u","-o pipefail" cause the script to fail
