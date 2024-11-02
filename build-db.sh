@@ -5,48 +5,44 @@
 # Github: https://www.github.com/archn00b
 # Contributors: ArchN00B
 
-# Set with the flags "-e", "-u","-o pipefail" cause the script to fail
-# if certain things happen, which is a good thing.  Otherwise, we can
-# get hidden bugs that are hard to discover.
+# Enable strict error handling
 set -euo pipefail
 
+# Find all package files
 x86_pkgbuild=$(find ../archnoob-pkgbuild/x86_64 -type f -name "*.pkg.tar.zst*")
 
-for x in ${x86_pkgbuild}
-do
-    mv "${x}" x86_64/
-    echo "Moving ${x}"
+# Move package files to the x86_64 directory
+for pkg in ${x86_pkgbuild}; do
+    mv "${pkg}" x86_64/
+    echo "Moving ${pkg}"
 done
 
 echo "###########################"
 echo "Building the repo database."
 echo "###########################"
 
-## Arch: x86_64
-cd x86_64
+# Navigate to the x86_64 directory and prepare for building
+cd x86_64 || exit
 rm -f core-repo*
 
 echo "###################################"
 echo "Building for architecture 'x86_64'."
 echo "###################################"
 
-## repo-add
-## -s: signs the packages
-## -n: only add new packages not already in database
-## -R: remove old package files when updating their entry
-repo-add -s -n -R core-repo.db.tar.gz *.pkg.tar.zst
+# Build the repository database
+repo-add -s -n -R core-repo.db.tar.gz -- *.pkg.tar.zst
 
-# Removing the symlinks because GitLab can't handle them.
-rm core-repo.db
-rm core-repo.db.sig
-rm core-repo.files
-rm core-repo.files.sig
+# Remove symlinks as GitLab can't handle them
+rm -f core-repo.db core-repo.db.sig core-repo.files core-repo.files.sig
 
-# Renaming the tar.gz files without the extension.
-mv core-repo.db.tar.gz core-repo.db
-mv core-repo.db.tar.gz.sig core-repo-db.sig
-mv core-repo.files.tar.gz core-repo.files
-mv core-repo.files.tar.gz.sig core-repo.files.sig
+# Rename the tar.gz files without the extension
+for file in core-repo.db.tar.gz core-repo.files.tar.gz; do
+    mv "${file}" "${file%.tar.gz}"
+done
+
+# Rename signature files
+mv core-repo.db.sig core-repo-db.sig
+mv core-repo.files.sig core-repo.files.sig
 
 echo "#######################################"
 echo "Packages in the repo have been updated!"
